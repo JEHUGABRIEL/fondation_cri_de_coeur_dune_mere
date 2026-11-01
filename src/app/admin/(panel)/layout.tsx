@@ -1,6 +1,5 @@
 import { count, eq, or } from "drizzle-orm";
 import Image from "next/image";
-import Link from "next/link";
 import { Suspense } from "react";
 import { Icon } from "@/components/Icon";
 import { db } from "@/db";
@@ -86,21 +85,17 @@ export default function PanelLayout({ children }: { children: React.ReactNode })
     <AdminShell
       side={
         <>
-          <Link href="/admin" className="adm-brand">
+          <div className="adm-brand">
             <Image src="/images/logo.png" alt="" width={40} height={40} />
             <span>
               <strong>Cri de Cœur</strong>
               <small>Back-office</small>
             </span>
-          </Link>
+          </div>
           <Suspense fallback={<div className="adm-nav" />}>
             <NavWithCounts />
           </Suspense>
           <div className="adm-side-foot">
-            <Link href="/" className="adm-side-link" target="_blank" rel="noopener noreferrer">
-              <Icon name="external" size={16} />
-              Voir le site
-            </Link>
             <LogoutButton className="adm-side-logout" />
           </div>
         </>

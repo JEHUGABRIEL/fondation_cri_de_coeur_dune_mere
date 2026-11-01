@@ -848,6 +848,23 @@ textarea.adm-input {
   .adm-row {
     grid-template-columns: minmax(0, 1fr);
   }
+  /* The bell sits left of the avatar, so an absolutely positioned panel would
+     run off the left edge. Anchor it to the viewport instead. */
+  .adm-bell-panel {
+    position: fixed;
+    top: 72px;
+    left: 0.5rem;
+    right: 0.5rem;
+    width: auto;
+    max-height: calc(100vh - 88px);
+    display: flex;
+    flex-direction: column;
+  }
+  .adm-bell-list {
+    max-height: none;
+    overflow-y: auto;
+    min-height: 0;
+  }
 }
 
 /* Registrations: payment */
@@ -1195,16 +1212,3 @@ textarea.adm-input {
   background: var(--grey);
 }
 
-.adm-side-foot .adm-side-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.4rem 0;
-  font-size: 0.85rem;
-  color: inherit;
-  opacity: 0.8;
-}
-
-.adm-side-foot .adm-side-link:hover {
-  opacity: 1;
-}
