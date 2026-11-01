@@ -11,7 +11,7 @@ import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Programmes",
-  alternates: { canonical: "/programmes" },
+  alternates: { canonical: "/programmes", languages: { fr: "/programmes", en: "/en/programmes" } },
   description:
     "Les programmes de la Fondation Cri de Cœur d’une Mère : santé des mères et planification familiale, bourses et scolarisation des filles, inclusion financière et entrepreneuriat des femmes.",
 };

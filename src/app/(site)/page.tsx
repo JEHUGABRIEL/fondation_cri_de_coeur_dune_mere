@@ -11,7 +11,7 @@ import { formatDate, getPartners, getPosts, getTestimonials } from "@/lib/conten
 import { presidentMessage, site } from "@/lib/site";
 
 export const metadata: Metadata = {
-  alternates: { canonical: "/" },
+  alternates: { canonical: "/", languages: { fr: "/", en: "/en" } },
 };
 
 const heroPhotos = [

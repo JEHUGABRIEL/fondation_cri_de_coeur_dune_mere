@@ -6,7 +6,7 @@ import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Crédits photo",
-  alternates: { canonical: "/credits" },
+  alternates: { canonical: "/credits", languages: { fr: "/credits", en: "/en/credits" } },
   description:
     "Crédits et licences des photographies d'illustration utilisées sur le site de la Fondation Cri de Cœur d’une Mère.",
 };

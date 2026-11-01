@@ -9,7 +9,7 @@ import { formatDate, getPosts } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "Actualités",
-  alternates: { canonical: "/actualites" },
+  alternates: { canonical: "/actualites", languages: { fr: "/actualites", en: "/en/news" } },
   description:
     "Suivez les actualités de la Fondation Cri de Cœur d’une Mère : santé des mères, planification familiale, éducation des filles, inclusion financière et actions de terrain à Bangui.",
 };

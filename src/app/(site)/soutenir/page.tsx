@@ -8,7 +8,7 @@ import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Nous soutenir",
-  alternates: { canonical: "/soutenir" },
+  alternates: { canonical: "/soutenir", languages: { fr: "/soutenir", en: "/en/support" } },
   description:
     "Soutenez la Fondation Cri de Cœur d’une Mère : santé des mères, bourses scolaires, inclusion financière des femmes, mécénat et partenariats à Bangui.",
 };

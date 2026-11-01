@@ -9,7 +9,7 @@ import { actions } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Nos actions",
-  alternates: { canonical: "/nos-actions" },
+  alternates: { canonical: "/nos-actions", languages: { fr: "/nos-actions", en: "/en/actions" } },
   description:
     "Les actions de la Fondation Cri de Cœur d’une Mère : santé des mères et planification familiale, éducation des filles, inclusion financière des femmes et lutte contre la drépanocytose.",
 };

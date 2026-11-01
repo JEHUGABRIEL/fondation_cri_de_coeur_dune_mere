@@ -9,7 +9,7 @@ import { presidentMessage, site, values } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "À propos",
-  alternates: { canonical: "/a-propos" },
+  alternates: { canonical: "/a-propos", languages: { fr: "/a-propos", en: "/en/about" } },
   description:
     "Découvrez la Fondation Cri de Cœur d’une Mère, sa présidente, ses valeurs et son siège à Bangui, en République centrafricaine.",
 };

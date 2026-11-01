@@ -5,7 +5,7 @@ import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Mentions légales & confidentialité",
-  alternates: { canonical: "/mentions-legales" },
+  alternates: { canonical: "/mentions-legales", languages: { fr: "/mentions-legales", en: "/en/legal" } },
   description:
     "Mentions légales, politique de confidentialité et conditions d'utilisation du site de la Fondation Cri de Cœur d’une Mère.",
 };

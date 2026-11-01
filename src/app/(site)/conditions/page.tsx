@@ -5,7 +5,7 @@ import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Conditions d'utilisation",
-  alternates: { canonical: "/conditions" },
+  alternates: { canonical: "/conditions", languages: { fr: "/conditions", en: "/en/terms" } },
   description:
     "Conditions d'utilisation du site de la Fondation Cri de Cœur d’une Mère : objet, accès, contenus publiés, formulaires, propriété intellectuelle et responsabilité.",
 };
