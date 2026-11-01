@@ -14,6 +14,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: "/credits", priority: 0.3 },
     { path: "/mentions-legales", priority: 0.2 },
     { path: "/conditions", priority: 0.2 },
+    { path: "/en", priority: 0.9 },
+    { path: "/en/about", priority: 0.7 },
+    { path: "/en/actions", priority: 0.7 },
+    { path: "/en/programmes", priority: 0.8 },
+    { path: "/en/news", priority: 0.6 },
+    { path: "/en/support", priority: 0.7 },
+    { path: "/en/legal", priority: 0.2 },
+    { path: "/en/terms", priority: 0.2 },
+    { path: "/en/credits", priority: 0.2 },
   ];
 
   return [
@@ -23,11 +32,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly" as const,
       priority: route.priority,
     })),
-    ...posts.map((post) => ({
-      url: `${site.url}/actualites/${post.slug}`,
-      lastModified: post.updatedAt.toISOString(),
-      changeFrequency: "yearly" as const,
-      priority: 0.6,
-    })),
+    ...posts.flatMap((post) => [
+      {
+        url: `${site.url}/actualites/${post.slug}`,
+        lastModified: post.updatedAt.toISOString(),
+        changeFrequency: "yearly" as const,
+        priority: 0.6,
+        alternates: { languages: { fr: `${site.url}/actualites/${post.slug}`, en: `${site.url}/en/news/${post.slug}` } },
+      },
+      {
+        url: `${site.url}/en/news/${post.slug}`,
+        lastModified: post.updatedAt.toISOString(),
+        changeFrequency: "yearly" as const,
+        priority: 0.5,
+        alternates: { languages: { fr: `${site.url}/actualites/${post.slug}`, en: `${site.url}/en/news/${post.slug}` } },
+      },
+    ]),
   ];
 }

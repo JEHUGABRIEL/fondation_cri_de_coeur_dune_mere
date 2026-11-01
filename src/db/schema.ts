@@ -30,11 +30,14 @@ const timestamps = {
     .$onUpdate(() => new Date()),
 };
 
+export const adminRole = pgEnum("admin_role", ["admin", "superadmin"]);
+
 export const admins = pgTable("admins", {
   id: serial("id").primaryKey(),
   email: text("email").notNull().unique(),
   name: text("name").notNull(),
   passwordHash: text("password_hash").notNull(),
+  role: adminRole("role").notNull().default("admin"),
   lastLoginAt: timestamp("last_login_at", { withTimezone: true }),
   /** Notifications created after this date are unread for this admin. */
   notificationsSeenAt: timestamp("notifications_seen_at", { withTimezone: true }),
@@ -222,4 +225,5 @@ export type PaymentStatus = (typeof paymentStatus.enumValues)[number];
 export type PaymentMethod = (typeof paymentMethod.enumValues)[number];
 export type Testimonial = typeof testimonials.$inferSelect;
 export type AuditLog = typeof auditLogs.$inferSelect;
+export type AdminRole = (typeof adminRole.enumValues)[number];
 export type Notification = typeof notifications.$inferSelect;

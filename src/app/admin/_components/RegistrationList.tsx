@@ -9,6 +9,9 @@ import { paymentMethodLabels, paymentStatusLabels, paymentStatusOrder } from "@/
 import { deleteRequest } from "../_actions/requests";
 import { saveRegistrationNote, setPaymentStatus } from "../_actions/registrations";
 import { SubmitButton } from "./buttons";
+import { Pagination } from "./Pagination";
+
+const PER_PAGE = 20;
 
 function whatsapp(phone: string, reference: string | null) {
   const digits = phone.replace(/[^\d]/g, "");
@@ -30,19 +33,25 @@ function StatusButton({ id, to, label, icon }: { id: number; to: PaymentStatus; 
   );
 }
 
-export async function RegistrationList({ statut }: { statut?: string }) {
+export async function RegistrationList({ statut, page }: { statut?: string; page?: string }) {
+  const current = Math.max(1, Number(page) || 1);
   const filter = (paymentStatusOrder as string[]).includes(statut ?? "") ? (statut as PaymentStatus) : null;
-  const [items, counts] = await Promise.all([
+  const [items, counts, [filtered]] = await Promise.all([
     db
       .select()
       .from(registrations)
       .where(filter ? eq(registrations.paymentStatus, filter) : undefined)
       .orderBy(desc(registrations.createdAt))
-      .limit(200),
+      .limit(PER_PAGE)
+      .offset((current - 1) * PER_PAGE),
     db
       .select({ status: registrations.paymentStatus, value: count() })
       .from(registrations)
       .groupBy(registrations.paymentStatus),
+    db
+      .select({ value: count() })
+      .from(registrations)
+      .where(filter ? eq(registrations.paymentStatus, filter) : undefined),
   ]);
   const byStatus = Object.fromEntries(counts.map((row) => [row.status, row.value])) as Partial<Record<PaymentStatus, number>>;
   const total = counts.reduce((sum, row) => sum + row.value, 0);
@@ -224,6 +233,14 @@ export async function RegistrationList({ statut }: { statut?: string }) {
           );
         })
       )}
+
+      <Pagination
+        page={current}
+        total={filtered.value}
+        perPage={PER_PAGE}
+        path="/admin/inscriptions"
+        params={{ statut: filter ?? undefined }}
+      />
     </>
   );
 }

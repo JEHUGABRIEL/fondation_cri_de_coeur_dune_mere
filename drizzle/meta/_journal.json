@@ -36,6 +36,13 @@
       "when": 1792306276605,
       "tag": "0004_partner_logo",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1793502332580,
+      "tag": "0005_greedy_warbound",
+      "breakpoints": true
     }
   ]
 }

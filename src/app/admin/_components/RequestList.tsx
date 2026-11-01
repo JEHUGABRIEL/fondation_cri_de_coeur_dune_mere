@@ -7,8 +7,11 @@ import { messages, registrations, type RequestStatus, requestStatus } from "@/db
 import { formatDateTime, statusLabels, statusOrder } from "@/lib/admin/status";
 import { deleteRequest, updateRequest } from "../_actions/requests";
 import { SubmitButton } from "./buttons";
+import { Pagination } from "./Pagination";
 
 type Kind = "inscriptions" | "messages";
+
+const PER_PAGE = 20;
 
 type Item = {
   id: number;
@@ -22,14 +25,15 @@ type Item = {
   createdAt: Date;
 };
 
-async function load(kind: Kind, status: RequestStatus | null): Promise<Item[]> {
+async function load(kind: Kind, status: RequestStatus | null, offset: number): Promise<Item[]> {
   if (kind === "inscriptions") {
     const rows = await db
       .select()
       .from(registrations)
       .where(status ? eq(registrations.status, status) : undefined)
       .orderBy(desc(registrations.createdAt))
-      .limit(200);
+      .limit(PER_PAGE)
+      .offset(offset);
     return rows.map((row) => ({ ...row, title: row.formation }));
   }
   const rows = await db
@@ -52,16 +56,38 @@ async function loadCounts(kind: Kind) {
   >;
 }
 
+async function loadTotal(kind: Kind, status: RequestStatus | null) {
+  const table = kind === "inscriptions" ? registrations : messages;
+  const [row] = await db
+    .select({ value: count() })
+    .from(table)
+    .where(status ? eq(table.status, status) : undefined);
+  return row?.value ?? 0;
+}
+
 function whatsapp(phone: string) {
   const digits = phone.replace(/[^\d]/g, "");
   return digits.length >= 8 ? `https://wa.me/${digits}` : null;
 }
 
-export async function RequestList({ kind, statut }: { kind: Kind; statut?: string }) {
+export async function RequestList({
+  kind,
+  statut,
+  page,
+}: {
+  kind: Kind;
+  statut?: string;
+  page?: string;
+}) {
+  const current = Math.max(1, Number(page) || 1);
   const status = (requestStatus.enumValues as readonly string[]).includes(statut ?? "")
     ? (statut as RequestStatus)
     : null;
-  const [items, counts] = await Promise.all([load(kind, status), loadCounts(kind)]);
+  const [items, counts, filtered] = await Promise.all([
+    load(kind, status, (current - 1) * PER_PAGE),
+    loadCounts(kind),
+    loadTotal(kind, status),
+  ]);
   const total = Object.values(counts).reduce((sum, value) => sum + (value ?? 0), 0);
   const base = `/admin/${kind}`;
 
@@ -176,6 +202,14 @@ export async function RequestList({ kind, statut }: { kind: Kind; statut?: strin
           );
         })
       )}
+
+      <Pagination
+        page={current}
+        total={filtered}
+        perPage={PER_PAGE}
+        path={base}
+        params={{ statut: status ?? undefined }}
+      />
     </>
   );
 }

@@ -5,17 +5,21 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { Icon } from "@/components/Icon";
-import { navigation, site } from "@/lib/site";
+import { type Lang, nav, switchPath, ui } from "@/lib/i18n";
+import { site } from "@/lib/site";
 
-type NavListProps = { variant: "bar" | "drawer"; onNavigate?: () => void };
+type NavListProps = { lang: Lang; variant: "bar" | "drawer"; onNavigate?: () => void };
 
-function NavList({ variant, onNavigate, pathname }: NavListProps & { pathname: string | null }) {
-  const isActive = (href: string) =>
-    pathname === null ? false : href === "/" ? pathname === "/" : pathname.startsWith(href);
+function NavList({ lang, variant, onNavigate, pathname }: NavListProps & { pathname: string | null }) {
+  const isActive = (href: string) => {
+    if (pathname === null) return false;
+    if (href === "/" || href === "/en") return pathname === href;
+    return pathname.startsWith(href);
+  };
 
   return (
     <ul>
-      {navigation.map((item) => {
+      {nav[lang].map((item) => {
         const active = isActive(item.href);
         const link = (
           <Link
@@ -43,10 +47,6 @@ function ActiveNavList(props: NavListProps) {
   return <NavList {...props} pathname={usePathname()} />;
 }
 
-/**
- * The current path is request data on dynamic routes, so it is read inside a
- * Suspense boundary; the fallback renders the same links without highlighting.
- */
 function Nav(props: NavListProps) {
   return (
     <Suspense fallback={<NavList {...props} pathname={null} />}>
@@ -55,9 +55,28 @@ function Nav(props: NavListProps) {
   );
 }
 
-export function SiteHeader() {
+function LangSwitch({ lang }: { lang: Lang }) {
+  const pathname = usePathname() ?? (lang === "en" ? "/en" : "/");
+  const href = switchPath(pathname, lang);
+  return (
+    <Link
+      href={href}
+      className="lang-switch"
+      hrefLang={ui[lang].otherLang}
+      lang={ui[lang].otherLang}
+      aria-label={ui[lang].language}
+      title={ui[lang].language}
+    >
+      {ui[lang].languageShort}
+    </Link>
+  );
+}
+
+export function SiteHeader({ lang = "fr" }: { lang?: Lang }) {
   const [open, setOpen] = useState(false);
   const [stuck, setStuck] = useState(false);
+  const home = lang === "en" ? "/en" : "/";
+  const support = lang === "en" ? "/en/support" : "/soutenir";
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -83,10 +102,10 @@ export function SiteHeader() {
   return (
     <header className={`site-head${stuck ? " stuck" : ""}`}>
       <div className="head-in">
-        <Link href="/" className="brand" aria-label={`${site.name} - accueil`}>
+        <Link href={home} className="brand" aria-label={`${site.name} — ${ui[lang].home}`}>
           <Image
             src="/images/logo.png"
-            alt="Logo de la Fondation Cri de Cœur d’une Mère"
+            alt=""
             width={512}
             height={512}
             className="brand-img"
@@ -94,16 +113,20 @@ export function SiteHeader() {
           />
           <span className="brand-word">
             <strong>Cri de Cœur</strong>
-            <small>Fondation d’une Mère</small>
+            <small>{lang === "en" ? "Foundation of a Mother" : "Fondation d’une Mère"}</small>
           </span>
         </Link>
 
         <nav className="navbar" aria-label="Navigation principale">
-          <Nav variant="bar" />
+          <Nav lang={lang} variant="bar" />
         </nav>
 
-        <Link href="/soutenir" className="nav-cta">
-          Nous soutenir
+        <Suspense fallback={<span className="lang-switch">{ui[lang].languageShort}</span>}>
+          <LangSwitch lang={lang} />
+        </Suspense>
+
+        <Link href={support} className="nav-cta">
+          {ui[lang].support}
         </Link>
 
         <button
@@ -132,17 +155,11 @@ export function SiteHeader() {
         inert={!open}
       >
         <div className="mmenu-head">
-          <Link href="/" className="brand" onClick={() => setOpen(false)}>
-            <Image
-              src="/images/logo.png"
-              alt="Logo de la Fondation Cri de Cœur d’une Mère"
-              width={500}
-              height={500}
-              className="brand-img"
-            />
+          <Link href={home} className="brand" onClick={() => setOpen(false)}>
+            <Image src="/images/logo.png" alt="" width={500} height={500} className="brand-img" />
             <span className="brand-word">
               <strong>Cri de Cœur</strong>
-              <small>Fondation</small>
+              <small>{lang === "en" ? "Foundation" : "Fondation"}</small>
             </span>
           </Link>
           <button
@@ -160,7 +177,7 @@ export function SiteHeader() {
             href={site.facebook}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="Facebook - Fondation Cri de Cœur d’une Mère"
+            aria-label={`Facebook — ${site.name}`}
           >
             <Icon name="facebook" size={20} />
           </a>
@@ -168,27 +185,34 @@ export function SiteHeader() {
             href={`https://wa.me/${site.phoneHref.replace("+", "")}`}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="WhatsApp - Fondation Cri de Cœur d’une Mère"
+            aria-label={`WhatsApp — ${site.name}`}
           >
             <Icon name="whatsapp" size={20} />
           </a>
-          <a href={`mailto:${site.email}`} aria-label="Envoyer un e-mail à la Fondation Cri de Cœur d’une Mère">
+          <a href={`mailto:${site.email}`} aria-label={`Email — ${site.name}`}>
             <Icon name="mail" size={20} />
           </a>
         </div>
 
         <div className="mmenu-list">
-          <Nav variant="drawer" onNavigate={() => setOpen(false)} />
+          <Nav lang={lang} variant="drawer" onNavigate={() => setOpen(false)} />
           <div className="mmenu-foot">
-            <Link href="/soutenir" className="btn btn-light" onClick={() => setOpen(false)}>
-              Nous soutenir
+            <Link href={support} className="btn btn-light" onClick={() => setOpen(false)}>
+              {ui[lang].support}
               <Icon name="heart" size={16} />
             </Link>
+            <Suspense fallback={null}>
+              <LangSwitch lang={lang} />
+            </Suspense>
+            <Link
+              href={lang === "en" ? "/en/support#contact" : "/#contact"}
+              className="btn btn-brand mmenu-contact-btn"
+              onClick={() => setOpen(false)}
+            >
+              <Icon name="mail" size={16} />
+              {ui[lang].contact}
+            </Link>
             <div className="mmenu-contact">
-              <a href={`tel:${site.phoneHref}`}>
-                <Icon name="phone" size={16} />
-                {site.phone}
-              </a>
               <a href={`mailto:${site.email}`}>
                 <Icon name="mail" size={16} />
                 {site.email}

@@ -44,6 +44,7 @@ if (password.length < MIN_PASSWORD_LENGTH) {
   process.exit(1);
 }
 
+const role = process.env.ADMIN_ROLE === "superadmin" ? "superadmin" : "admin";
 const passwordHash = await hashPassword(password);
 const normalized = email.trim().toLowerCase();
 const [existing] = await db
@@ -54,10 +55,10 @@ const [existing] = await db
 if (existing) {
   await db
     .update(schema.admins)
-    .set({ name, passwordHash })
+    .set({ name, passwordHash, role })
     .where(eq(schema.admins.id, existing.id));
-  console.log(`Administrateur ${normalized} mis à jour.`);
+  console.log(`Compte ${normalized} mis à jour (${role}).`);
 } else {
-  await db.insert(schema.admins).values({ email: normalized, name, passwordHash });
-  console.log(`Administrateur ${normalized} créé.`);
+  await db.insert(schema.admins).values({ email: normalized, name, passwordHash, role });
+  console.log(`Compte ${normalized} créé (${role}).`);
 }

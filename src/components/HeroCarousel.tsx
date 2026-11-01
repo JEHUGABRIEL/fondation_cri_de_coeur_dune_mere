@@ -2,30 +2,29 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { Icon } from "@/components/Icon";
+import { type Lang, ui } from "@/lib/i18n";
 
 type Photo = { src: string; alt: string };
 
 /** Hero photos shown one at a time, cross-fading every few seconds. */
-export function HeroCarousel({ photos }: { photos: Photo[] }) {
+export function HeroCarousel({ photos, lang = "fr" }: { photos: Photo[]; lang?: Lang }) {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
-  const [stopped, setStopped] = useState(false);
 
   useEffect(() => {
-    if (paused || stopped || photos.length < 2) return;
+    if (paused || photos.length < 2) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const timer = window.setInterval(() => {
       setIndex((current) => (current + 1) % photos.length);
     }, 5000);
     return () => window.clearInterval(timer);
-  }, [paused, stopped, photos.length]);
+  }, [paused, photos.length]);
 
   return (
     <div
       className="lt-hero-media is-carousel"
       aria-roledescription="carrousel"
-      aria-label="Photos de la Fondation"
+      aria-label={lang === "en" ? "Foundation photos" : "Photos de la Fondation"}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
@@ -36,7 +35,7 @@ export function HeroCarousel({ photos }: { photos: Photo[] }) {
           aria-hidden={photoIndex !== index}
           role="group"
           aria-roledescription="diapositive"
-          aria-label={`${photoIndex + 1} sur ${photos.length}`}
+          aria-label={`${photoIndex + 1} ${ui[lang].of} ${photos.length}`}
         >
           <Image
             src={photo.src}
@@ -48,26 +47,6 @@ export function HeroCarousel({ photos }: { photos: Photo[] }) {
           />
         </div>
       ))}
-      <div className="lt-hero-dots" role="group" aria-label="Choisir une photo">
-        <button
-          type="button"
-          className="lt-hero-toggle"
-          aria-label={stopped ? "Reprendre le défilement" : "Mettre en pause le défilement"}
-          onClick={() => setStopped((value) => !value)}
-        >
-          <Icon name={stopped ? "play" : "pause"} size={16} />
-        </button>
-        {photos.map((photo, photoIndex) => (
-          <button
-            key={photo.src}
-            type="button"
-            className={photoIndex === index ? "is-active" : undefined}
-            aria-label={`Afficher la photo ${photoIndex + 1}`}
-            aria-current={photoIndex === index}
-            onClick={() => setIndex(photoIndex)}
-          />
-        ))}
-      </div>
     </div>
   );
 }

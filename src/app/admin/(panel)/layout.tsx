@@ -97,6 +97,10 @@ export default function PanelLayout({ children }: { children: React.ReactNode })
             <NavWithCounts />
           </Suspense>
           <div className="adm-side-foot">
+            <Link href="/" className="adm-side-link" target="_blank" rel="noopener noreferrer">
+              <Icon name="external" size={16} />
+              Voir le site
+            </Link>
             <LogoutButton className="adm-side-logout" />
           </div>
         </>

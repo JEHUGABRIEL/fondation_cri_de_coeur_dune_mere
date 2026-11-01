@@ -8,7 +8,7 @@ export const metadata: Metadata = { title: "Candidatures" };
 
 export default async function Page({ searchParams }: PageProps<"/admin/inscriptions">) {
   await requireAdmin();
-  const { ok, statut } = await searchParams;
+  const { ok, statut, page } = await searchParams;
 
   return (
     <>
@@ -23,7 +23,7 @@ export default async function Page({ searchParams }: PageProps<"/admin/inscripti
         </a>
       </div>
       <Flash ok={ok} />
-      <RegistrationList statut={typeof statut === "string" ? statut : undefined} />
+      <RegistrationList statut={typeof statut === "string" ? statut : undefined} page={typeof page === "string" ? page : undefined} />
     </>
   );
 }

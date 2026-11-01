@@ -1194,3 +1194,17 @@ textarea.adm-input {
 .adm-logo-empty {
   background: var(--grey);
 }
+
+.adm-side-foot .adm-side-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0;
+  font-size: 0.85rem;
+  color: inherit;
+  opacity: 0.8;
+}
+
+.adm-side-foot .adm-side-link:hover {
+  opacity: 1;
+}

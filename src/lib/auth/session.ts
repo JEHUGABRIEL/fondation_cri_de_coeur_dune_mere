@@ -3,7 +3,7 @@ import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { db } from "@/db";
-import { admins } from "@/db/schema";
+import { admins, type AdminRole } from "@/db/schema";
 import { readSession, SESSION_COOKIE, SESSION_DURATION_S, signSession } from "./token";
 
 export async function startSession(adminId: number) {
@@ -21,7 +21,12 @@ export async function endSession() {
   (await cookies()).delete(SESSION_COOKIE);
 }
 
-export type CurrentAdmin = { id: number; name: string; email: string };
+export type CurrentAdmin = {
+  id: number;
+  name: string;
+  email: string;
+  role: AdminRole;
+};
 
 /**
  * Data access layer: every admin page and action calls this. The proxy only
@@ -32,11 +37,18 @@ export async function requireAdmin(): Promise<CurrentAdmin> {
   if (!session) redirect("/admin/login");
 
   const [admin] = await db
-    .select({ id: admins.id, name: admins.name, email: admins.email })
+    .select({ id: admins.id, name: admins.name, email: admins.email, role: admins.role })
     .from(admins)
     .where(eq(admins.id, session.adminId))
     .limit(1);
 
   if (!admin) redirect("/admin/login");
+  return admin;
+}
+
+/** Reserves an area to superadmins; regular admins are sent back to the dashboard. */
+export async function requireSuperadmin(): Promise<CurrentAdmin> {
+  const admin = await requireAdmin();
+  if (admin.role !== "superadmin") redirect("/admin");
   return admin;
 }

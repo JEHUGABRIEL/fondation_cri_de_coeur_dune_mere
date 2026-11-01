@@ -1,10 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { type Lang, ui } from "@/lib/i18n";
 
 type Crumb = { label: string; href: string };
 
 type PageHeroProps = {
+  lang?: Lang;
   current: string;
   parents?: Crumb[];
   title: ReactNode;
@@ -15,6 +17,7 @@ type PageHeroProps = {
 };
 
 export function PageHero({
+  lang = "fr",
   current,
   parents = [],
   title,
@@ -27,8 +30,8 @@ export function PageHero({
     <section className={`lt-hero lt-pagehero${image ? "" : " no-image"}`}>
       <div className="wrap lt-hero-in">
         <div className="lt-band">
-          <nav className="crumbs" aria-label="Fil d'Ariane">
-            {[{ label: "Accueil", href: "/" }, ...parents].map((crumb) => (
+          <nav className="crumbs" aria-label={ui[lang].breadcrumb}>
+            {[{ label: ui[lang].home, href: lang === "en" ? "/en" : "/" }, ...parents].map((crumb) => (
               <span key={crumb.href}>
                 <Link href={crumb.href}>{crumb.label}</Link>
                 <span className="sep" aria-hidden="true">

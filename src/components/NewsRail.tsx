@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { type Lang, ui } from "@/lib/i18n";
 
 type Post = {
   id: number;
@@ -18,7 +19,7 @@ type Post = {
  * Row of tall news tiles: the active one widens to reveal its text.
  * Hover or focus activates a tile; on touch, the first tap does.
  */
-export function NewsRail({ posts }: { posts: Post[] }) {
+export function NewsRail({ posts, lang = "fr" }: { posts: Post[]; lang?: Lang }) {
   const [active, setActive] = useState(0);
 
   return (
@@ -39,8 +40,11 @@ export function NewsRail({ posts }: { posts: Post[] }) {
               <span className="mb-tag">{post.category}</span>
               <h3>{post.title}</h3>
               <time dateTime={post.publishedAt}>{post.date}</time>
-              <Link href={`/actualites/${post.slug}`} className="btn btn-outline">
-                Découvrir
+              <Link
+                href={lang === "en" ? `/en/news/${post.slug}` : `/actualites/${post.slug}`}
+                className="btn btn-outline"
+              >
+                {ui[lang].discover}
               </Link>
             </div>
           </div>

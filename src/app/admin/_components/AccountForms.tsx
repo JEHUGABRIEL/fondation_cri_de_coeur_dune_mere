@@ -2,7 +2,7 @@
 
 import { idleState } from "@/lib/admin/form";
 import { useActionForm } from "@/lib/use-action-form";
-import { changePassword, createAdmin } from "../_actions/accounts";
+import { changePassword, changeRole, createAdmin } from "../_actions/accounts";
 import { FormAlert } from "./Alerts";
 import { SubmitButton } from "./buttons";
 import { describedBy, Field } from "./Field";
@@ -45,9 +45,44 @@ export function CreateAdminForm() {
           aria-describedby={describedBy("new-password", true, errors.password)}
         />
       </Field>
+      <Field
+        id="new-role"
+        label="Rôle"
+        hint="Un superadmin peut gérer les comptes et les rôles."
+        error={errors.role}
+      >
+        <select id="new-role" name="role" className="adm-input" defaultValue="admin">
+          <option value="admin">Administrateur</option>
+          <option value="superadmin">Superadmin</option>
+        </select>
+      </Field>
       <div className="adm-form-foot">
         <SubmitButton pending={pending}>Créer le compte</SubmitButton>
       </div>
+    </form>
+  );
+}
+
+export function RoleForm({ id, role, disabled }: { id: number; role: string; disabled?: boolean }) {
+  return (
+    <form action={changeRole} className="adm-inline-form">
+      <input type="hidden" name="id" value={id} />
+      <label className="adm-sr" htmlFor={`role-${id}`}>
+        Rôle
+      </label>
+      <select
+        id={`role-${id}`}
+        name="role"
+        className="adm-input adm-input-sm"
+        defaultValue={role}
+        disabled={disabled}
+      >
+        <option value="admin">Administrateur</option>
+        <option value="superadmin">Superadmin</option>
+      </select>
+      <button type="submit" className="adm-btn adm-btn-ghost adm-btn-sm" disabled={disabled}>
+        Mettre à jour
+      </button>
     </form>
   );
 }

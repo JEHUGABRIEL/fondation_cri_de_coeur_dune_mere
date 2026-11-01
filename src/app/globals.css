@@ -3475,6 +3475,32 @@ h2 {
 .site-head .nav-cta:hover {
   background: var(--brand-d);
 }
+.lang-switch {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  padding: 0.45rem 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--brand);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  transition: background 0.2s, border-color 0.2s;
+}
+.lang-switch:hover {
+  background: var(--soft2);
+  border-color: var(--soft);
+}
+@media (max-width: 1060px) {
+  .mmenu-foot .lang-switch {
+    align-self: flex-start;
+    color: #fff;
+    border-color: hsla(0, 0%, 100%, 0.5);
+  }
+}
 .site-head .burger {
   position: static;
   margin-left: auto;
@@ -4844,4 +4870,10 @@ dialog.mb-modal {
   background: none;
   color: #fff;
   cursor: pointer;
+}
+
+/* Bouton « Nous contacter » du menu mobile */
+.mmenu-foot .mmenu-contact-btn {
+  justify-content: center;
+  width: 100%;
 }
